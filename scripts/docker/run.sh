@@ -29,7 +29,13 @@ usage()
     echo "$usage_string"
     echo "see: $docs_url"
 }
-os=`cat /etc/os-release | grep -oP "(?<=VERSION_CODENAME=).*"`
+platform=`uname -s`
+case ${platform} in
+    Linux*)     os=`cat /etc/os-release | grep -oP "(?<=VERSION_CODENAME=).*"`
+                ;; 
+    *)          os="focal" # In macOS / Windows, default to focal, unless override is provided below.
+                ;;
+esac
 args="dds:=false robot:=sim_pub"
 tagrepo=astrobee
 
@@ -70,20 +76,36 @@ if [ "$tagrepo" = "astrobee" ] && [[ "$(docker images -q $tagrepo/$tag 2> /dev/n
   exit 1
 fi
 
-rootdir=$(dirname "$(readlink -f "$0")")
+# readlink is not UNIX standard, default to perl.
+readlinkf(){ perl -MCwd -e 'print Cwd::abs_path shift' "$1";}
+rootdir=$(dirname "$(readlinkf "$0")")
 cd $rootdir
 
 # setup XServer for Docker
 XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
-touch $XAUTH
-xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+case ${platform} in
+    Darwin*)    XAUTH=~/.Xauthority ;;
+          *)    XAUTH=/tmp/.docker.xauth ;;
+esac
+if [ "$platform" = "Darwin" ]; then
+    ip=`ifconfig en0 | grep inet | awk '$1=="inet" {print $2}'`
+    open -a XQuartz
+    sleep 1
+    DISPLAY=$ip:0
+fi
+
+if [ "$platform" = "Darwin" ]; then
+    xhost +$IP
+    xhost +local:docker
+else
+    touch $XAUTH
+    xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+fi
 
 docker run -it --rm --name astrobee \
         --volume=$XSOCK:$XSOCK:rw \
         --volume=$XAUTH:$XAUTH:rw \
         --env="XAUTHORITY=${XAUTH}" \
-        --env="DISPLAY" \
-        --gpus all \
+        --env="DISPLAY=${DISPLAY}" \ #--gpus all \
       $tagrepo/$tag \
     /astrobee_init.sh roslaunch astrobee sim.launch $args

@@ -5,7 +5,7 @@
 # You must set the docker context to be the repository root directory
 
 ARG UBUNTU_VERSION=16.04
-FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu$UBUNTU_VERSION
+FROM ubuntu:$UBUNTU_VERSION
 
 ARG ROS_VERSION=kinetic
 ARG PYTHON=''

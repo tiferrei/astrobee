@@ -38,7 +38,7 @@ if [ "$DIST" != "xenial" ]; then
   cd ${DEBIAN_LOC}
   ./build_opencv.sh || exit 1
   cd ${DEBIAN_LOC}/libopencv
-  sudo dpkg -i libopencv*_amd64.deb || exit 1
+  sudo dpkg -i libopencv*_*.deb || exit 1
 
   # alvar
   cp ${DEBIAN_LOC}/files/alvar_rules ${DEBIAN_LOC}/alvar/rules
@@ -73,47 +73,47 @@ cd ${DEBIAN_LOC}/alvar
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_alvar.sh || exit 1
-sudo dpkg -i libalvar*_amd64.deb || exit 1
+sudo dpkg -i libalvar*_*.deb || exit 1
 
 # dlib
 cd ${DEBIAN_LOC}/dlib
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_dlib.sh || exit 1
-sudo dpkg -i libdbowdlib*_amd64.deb || exit 1
+sudo dpkg -i libdbowdlib*_*.deb || exit 1
 
 # dbow2
 cd ${DEBIAN_LOC}/dbow2
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_dbow2.sh || exit 1
-sudo dpkg -i libdbow*_amd64.deb || exit 1
+sudo dpkg -i libdbow*_*.deb || exit 1
 
 # gtsam
 cd ${DEBIAN_LOC}/gtsam
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_gtsam.sh || exit 1
-sudo dpkg -i libgtsam*_amd64.deb || exit 1
+sudo dpkg -i libgtsam*_*.deb || exit 1
 
 # decomputil
 cd ${DEBIAN_LOC}/decomputil
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_decomputil.sh || exit 1
-sudo dpkg -i libdecomputil*_amd64.deb || exit 1
+sudo dpkg -i libdecomputil*_*.deb || exit 1
 
 # jps3d
 cd ${DEBIAN_LOC}/jps3d
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_jps3d.sh || exit 1
-sudo dpkg -i libjps3d*_amd64.deb || exit 1
+sudo dpkg -i libjps3d*_*.deb || exit 1
 
 # openmvg
 cd ${DEBIAN_LOC}/openmvg
 sudo mk-build-deps -i -r -t "apt-get --no-install-recommends -y" control
 cd ${DEBIAN_LOC}
 ./build_openmvg.sh || exit 1
-sudo dpkg -i libopenmvg*_amd64.deb || exit 1
+sudo dpkg -i libopenmvg*_*.deb || exit 1
 

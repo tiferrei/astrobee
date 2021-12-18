@@ -26,8 +26,14 @@ usage()
 {
     echo "usage: sysinfo_page [[[-a file ] [-i]] | [-h]]"
 }
-
-os=`cat /etc/os-release | grep -oP "(?<=VERSION_CODENAME=).*"`
+readlinkf(){ perl -MCwd -e 'print Cwd::abs_path shift' "$1";}
+platform=`uname -s`
+case ${platform} in
+    Linux*)     os=`cat /etc/os-release | grep -oP "(?<=VERSION_CODENAME=).*"`
+                ;; 
+    *)          os="focal" # In macOS / Windows, default to focal, unless override is provided below.
+                ;;
+esac
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -47,7 +53,7 @@ while [ "$1" != "" ]; do
 done
 
 
-thisdir=$(dirname "$(readlink -f "$0")")
+thisdir=$(dirname "$(readlinkf "$0")")
 rootdir=${thisdir}/../..
 echo "Astrobee path: "${rootdir}/
 
