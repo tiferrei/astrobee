@@ -14,6 +14,15 @@ ARG PYTHON=''
 ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES \
+        ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+        ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics,compat32,utility
+
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
+    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+
 # install of apt-utils suppresses bogus warnings later
 RUN apt-get update \
   && apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" \
@@ -23,8 +32,15 @@ RUN apt-get update \
   lsb-release \
   sudo \
   wget \
+  libglvnd0 \
+  libgl1 \
+  libglx0 \
+  libegl1 \
+  libgles2 \
+  libxau6 libxdmcp6 libxcb1 libxext6 libx11-6 \
   && rm -rf /var/lib/apt/lists/*
 
+RUN echo "{"file_format_version" : "1.0.0","ICD" : {"library_path" : "libEGL_nvidia.so.0"}}" > /usr/share/glvnd/egl_vendor.d/10_nvidia.json
 # suppress detached head warnings later
 RUN git config --global advice.detachedHead false
 
